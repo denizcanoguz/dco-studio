@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DCO Studio – Mobile puzzle games with a twist</title>
+<meta name="description" content="DCO Studio is the independent mobile game studio of Deniz Can Oğuz. Maker of Doubloon: Coin Merge Puzzle for Android.">
+<meta name="theme-color" content="#0e0b1a">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://denizcanoguz.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="DCO Studio – Mobile puzzle games with a twist">
+<meta property="og:description" content="Independent mobile game studio. Maker of Doubloon: Coin Merge Puzzle.">
+<meta property="og:url" content="https://denizcanoguz.github.io/">
+<meta property="og:image" content="https://denizcanoguz.github.io/assets/doubloon/feature.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  :root {
+    --bg: #0e0b1a;
+    --bg-2: #130f24;
+    --surface: #18132c;
+    --surface-2: #211a3b;
+    --line: #2c2450;
+    --fg: #f3effb;
+    --muted: #a9a1c2;
+    --gold: #f5b942;
+    --gold-ink: #2a1a00;
+    --green: #47d987;
+    --radius: 20px;
+    --wrap: 1120px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 17px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased; overflow-x: hidden;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  h1, h2, h3, p { margin: 0; }
+  h1, h2, h3 { line-height: 1.12; letter-spacing: -0.02em; text-wrap: balance; }
+  .wrap { width: 100%; max-width: var(--wrap); margin: 0 auto; padding: 0 20px; }
+  .eyebrow {
+    font-size: .78rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--gold);
+  }
+  .muted { color: var(--muted); }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+
+  /* Header */
+  header {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  }
+  .bar { display: flex; align-items: center; gap: 20px; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; font-size: 1.12rem; letter-spacing: -0.01em; }
+  .brand svg { width: 34px; height: 34px; flex: none; }
+  .brand span span { color: var(--muted); font-weight: 600; }
+  nav { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+  nav a { text-decoration: none; color: var(--muted); font-size: .95rem; font-weight: 600; padding: 8px 12px; border-radius: 10px; }
+  nav a:hover { color: var(--fg); background: var(--surface); }
+  .lang {
+    margin-left: 6px; display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface);
+  }
+  .lang button {
+    font: inherit; font-size: .78rem; font-weight: 700; color: var(--muted); background: none; border: 0; cursor: pointer;
+    padding: 4px 10px; border-radius: 999px;
+  }
+  .lang button[aria-pressed="true"] { background: var(--gold); color: var(--gold-ink); }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; text-decoration: none; cursor: pointer;
+    font-weight: 700; font-size: 1rem; padding: 13px 22px; border-radius: 14px; border: 1px solid transparent;
+    transition: transform .15s ease, background .15s ease, border-color .15s ease;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn.primary { background: var(--gold); color: var(--gold-ink); box-shadow: 0 4px 0 #b47a12; }
+  .btn.primary:hover { background: #ffc85a; }
+  .btn.ghost { border-color: var(--line); background: var(--surface); }
+  .btn.ghost:hover { border-color: #46397c; background: var(--surface-2); }
+  .btn.soon { border: 1px dashed #4a3d82; color: var(--muted); background: transparent; cursor: default; }
+  .btn.soon:hover { transform: none; }
+  .btn svg { width: 18px; height: 18px; flex: none; }
+
+  /* Hero */
+  .hero { position: relative; padding: 72px 0 88px; }
+  .hero::before {
+    content: ""; position: absolute; inset: -64px 0 0; z-index: -1;
+    background:
+      radial-gradient(620px 420px at 82% 28%, rgba(118, 74, 226, .34), transparent 70%),
+      radial-gradient(520px 380px at 8% 0%, rgba(245, 185, 66, .13), transparent 70%);
+  }
+  .hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: center; }
+  .hero h1 { font-size: clamp(2.5rem, 6vw, 4.4rem); font-weight: 850; margin: 18px 0 20px; }
+  .hero h1 em { font-style: normal; color: var(--gold); }
+  .hero p.lead { font-size: 1.16rem; color: var(--muted); max-width: 34em; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  .phones { position: relative; height: 520px; }
+  .phone {
+    position: absolute; width: 248px; aspect-ratio: 9 / 16; border-radius: 30px; overflow: hidden;
+    border: 6px solid #07050f; outline: 1px solid #3a3066; background: #07050f;
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .8);
+  }
+  .phone img { width: 100%; height: 100%; object-fit: cover; }
+  .phone.back { right: 4%; top: 0; transform: rotate(7deg); opacity: .9; }
+  .phone.front { left: 6%; bottom: 0; transform: rotate(-5deg); }
+  .tile {
+    position: absolute; display: grid; place-items: center; font-weight: 850; color: #1b1330;
+    border-radius: 16px; box-shadow: 0 5px 0 rgba(0, 0, 0, .28); animation: bob 6s ease-in-out infinite;
+  }
+  .tile.t1 { width: 64px; height: 64px; font-size: 1.5rem; background: #f7c07a; right: 0; bottom: 70px; }
+  .tile.t2 { width: 52px; height: 52px; font-size: 1.15rem; background: #7fd8e0; left: 0; top: 40px; animation-delay: -2s; }
+  .tile.t3 { width: 46px; height: 46px; font-size: 1rem; background: #c08af0; right: 34%; top: -10px; animation-delay: -4s; }
+  @keyframes bob { 50% { transform: translateY(-10px); } }
+  @media (prefers-reduced-motion: reduce) { .tile { animation: none; } html { scroll-behavior: auto; } }
+
+  /* Sections */
+  section { padding: 80px 0; }
+  .section-head { max-width: 40em; margin-bottom: 40px; }
+  .section-head h2 { font-size: clamp(1.9rem, 4vw, 2.7rem); font-weight: 820; margin-top: 12px; }
+  .section-head p { color: var(--muted); margin-top: 14px; }
+
+  /* Game card */
+  .game {
+    border: 1px solid var(--line); border-radius: 28px; overflow: hidden;
+    background: linear-gradient(180deg, #211550 0%, var(--surface) 46%);
+  }
+  .game-top { display: grid; grid-template-columns: auto 1fr; gap: 24px; padding: 36px 36px 8px; align-items: center; }
+  .game-top img { width: 112px; height: 112px; border-radius: 26px; box-shadow: 0 14px 30px -10px rgba(0, 0, 0, .7); }
+  .game-top h3 { font-size: clamp(1.6rem, 3.4vw, 2.2rem); font-weight: 820; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px; font-size: .8rem; font-weight: 700; color: var(--green);
+    background: rgba(71, 217, 135, .1); border: 1px solid rgba(71, 217, 135, .3); padding: 4px 12px; border-radius: 999px; margin-bottom: 12px;
+  }
+  .pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .pill.amber { color: var(--gold); background: rgba(245, 185, 66, .1); border-color: rgba(245, 185, 66, .3); }
+  .game-body { padding: 20px 36px 36px; }
+  .game-body > p { color: #d3cdea; max-width: 46em; font-size: 1.08rem; }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 0; padding: 0; list-style: none; }
+  .facts li { font-size: .86rem; font-weight: 600; color: var(--muted); border: 1px solid var(--line); background: rgba(14, 11, 26, .5); padding: 5px 12px; border-radius: 999px; }
+
+  .shots { display: flex; gap: 16px; overflow-x: auto; padding: 8px 36px 28px; scroll-snap-type: x proximity; scrollbar-width: thin; scrollbar-color: #40356f transparent; }
+  .shots img { flex: none; width: 214px; aspect-ratio: 9 / 16; border-radius: 20px; border: 1px solid #3a3066; scroll-snap-align: center; background: #07050f; }
+
+  h4 { margin: 40px 0 16px; font-size: 1.15rem; letter-spacing: -0.01em; }
+  .currencies { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+  .cur { display: flex; gap: 14px; align-items: flex-start; padding: 16px; border-radius: 16px; background: rgba(14, 11, 26, .55); border: 1px solid var(--line); }
+  .cur b { display: block; font-size: .98rem; }
+  .cur span { font-size: .9rem; color: var(--muted); line-height: 1.45; display: block; margin-top: 2px; }
+  .coin { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 1.05rem; color: #1b1330; background: var(--c); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .18); }
+  .features { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px 28px; padding: 0; margin: 0; list-style: none; }
+  .features li { position: relative; padding-left: 26px; color: #d3cdea; font-size: .98rem; }
+  .features li::before { content: ""; position: absolute; left: 0; top: .55em; width: 12px; height: 12px; border-radius: 4px; background: var(--gold); }
+  .game-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; align-items: center; }
+
+  /* Upcoming */
+  .next { margin-top: 20px; display: grid; grid-template-columns: auto 1fr; gap: 22px; align-items: center; padding: 28px 36px; border: 1px solid var(--line); border-radius: 28px; background: var(--surface); }
+  .next .grid9 { display: grid; grid-template-columns: repeat(3, 22px); gap: 4px; padding: 12px; border-radius: 22px; background: var(--surface-2); border: 1px solid var(--line); }
+  .next .grid9 i { width: 22px; height: 22px; border-radius: 6px; background: #6f5bd0; }
+  .next .grid9 i:nth-child(3n+2) { background: #8f7bf0; }
+  .next .grid9 i:last-child { background: transparent; outline: 1px dashed #4a3d82; outline-offset: -1px; }
+  .next h3 { font-size: 1.4rem; font-weight: 800; }
+  .next p { color: var(--muted); margin-top: 6px; max-width: 44em; }
+
+  /* About */
+  .about { background: var(--bg-2); border-block: 1px solid var(--line); }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card { padding: 26px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line); }
+  .card .n { font-size: .8rem; font-weight: 800; color: var(--gold); letter-spacing: .1em; }
+  .card h3 { font-size: 1.2rem; margin: 10px 0 8px; }
+  .card p { color: var(--muted); font-size: .98rem; }
+  .stack { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; padding: 0; list-style: none; }
+  .stack li { font-size: .85rem; font-weight: 600; padding: 5px 12px; border-radius: 8px; background: var(--surface-2); color: #cfc8e8; font-family: ui-monospace, "Cascadia Code", Consolas, monospace; }
+
+  /* Contact */
+  .contact-box { text-align: center; padding: 56px 24px; border-radius: 28px; border: 1px solid var(--line); background: radial-gradient(520px 260px at 50% 0%, rgba(118, 74, 226, .28), transparent 70%), var(--surface); }
+  .contact-box h2 { font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 820; margin-top: 12px; }
+  .contact-box p { color: var(--muted); max-width: 34em; margin: 14px auto 0; }
+  .contact-box .cta { justify-content: center; }
+
+  footer { padding: 36px 0 48px; color: var(--muted); font-size: .9rem; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; }
+  footer a { text-decoration: none; }
+  footer a:hover { color: var(--fg); }
+  footer .sp { margin-left: auto; display: flex; gap: 20px; flex-wrap: wrap; }
+
+  @media (max-width: 900px) {
+    .hero { padding: 48px 0 64px; }
+    .hero-grid { grid-template-columns: 1fr; }
+    .phones { height: 420px; max-width: 420px; margin: 0 auto; width: 100%; }
+    .phone { width: 200px; }
+    .cards { grid-template-columns: 1fr; }
+    section { padding: 60px 0; }
+  }
+  @media (max-width: 640px) {
+    nav a { display: none; }
+    .game-top { grid-template-columns: 1fr; padding: 24px 20px 4px; gap: 16px; }
+    .game-top img { width: 88px; height: 88px; border-radius: 20px; }
+    .game-body { padding: 16px 20px 28px; }
+    .shots { padding: 8px 20px 24px; }
+    .shots img { width: 180px; }
+    .next { grid-template-columns: 1fr; padding: 24px 20px; }
+    .next .grid9 { width: max-content; }
+    .phones { height: 360px; }
+    .phone { width: 172px; border-radius: 24px; }
+    .btn { width: 100%; justify-content: center; }
+    footer .sp { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <a class="brand" href="#top" aria-label="DCO Studio">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="60" y="4" rx="16" fill="#b47a12"/><rect width="64" height="58" rx="16" fill="#f5b942"/><path fill="#2a1a00" d="M9 20h8.5c5.4 0 9 3.6 9 9s-3.600 9-9 9H9zm5 4.400v9.200h3.300c2.600 0 4.200-1.800 4.200-4.600s-1.600-4.600-4.200-4.600zM38 19.600c3 0 5.400 1.300 6.900 3.600l-3.800 2.700c-.7-1.100-1.700-1.700-3-1.700-2.400 0-4 1.900-4 4.800s1.600 4.800 4 4.800c1.300 0 2.300-.600 3-1.700l3.800 2.700c-1.500 2.300-3.900 3.600-6.900 3.600-5.200 0-9-3.900-9-9.400s3.800-9.400 9-9.400z"/><circle cx="50.500" cy="29" r="7" fill="none" stroke="#2a1a00" stroke-width="4.600"/></svg>
+      <span>DCO <span>Studio</span></span>
+    </a>
+    <nav aria-label="Main">
+      <a href="#games" data-i18n="nav.games">Games</a>
+      <a href="#about" data-i18n="nav.about">About</a>
+      <a href="#contact" data-i18n="nav.contact">Contact</a>
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang="tr" aria-pressed="false">TR</button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <div class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow" data-i18n="hero.eyebrow">Independent mobile game studio</div>
+        <h1 data-i18n="hero.title">Pocket-sized puzzle games <em>with a twist.</em></h1>
+        <p class="lead" data-i18n="hero.lead">DCO Studio is the one-person studio of Deniz Can Oğuz. I design, build and publish mobile games for Android: familiar to pick up, with a rule or two you have not seen before.</p>
+        <div class="cta">
+          <a class="btn primary" href="#doubloon" data-i18n="hero.cta1">Meet Doubloon</a>
+          <a class="btn ghost" href="#contact" data-i18n="hero.cta2">Get in touch</a>
+        </div>
+      </div>
+      <div class="phones" aria-hidden="true">
+        <div class="phone back"><img src="assets/doubloon/shot-2.webp" alt="" width="540" height="960"></div>
+        <div class="phone front"><img src="assets/doubloon/shot-7.webp" alt="" width="540" height="960"></div>
+        <div class="tile t1">64</div><div class="tile t2">8</div><div class="tile t3">2</div>
+      </div>
+    </div>
+  </div>
+
+  <section id="games">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow" data-i18n="games.eyebrow">Games</div>
+        <h2 data-i18n="games.title">One game out the door, the next on the bench.</h2>
+      </div>
+
+      <article class="game" id="doubloon">
+        <div class="game-top">
+          <img src="assets/doubloon/icon.webp" alt="Doubloon app icon" width="256" height="256">
+          <div>
+            <div class="pill" data-i18n="dbl.status">In closed testing · Android</div>
+            <h3>Doubloon: <span data-i18n="dbl.sub">Coin Merge Puzzle</span></h3>
+          </div>
+        </div>
+        <div class="game-body">
+          <p data-i18n="dbl.desc">Slide, merge and double your coins. Doubloon is a relaxing number-merging puzzle where every coin you combine grows your fortune. Start with the Japanese Yen, build your wealth and unlock six more currencies, each with its own colors, music and a rule that changes how you play.</p>
+          <ul class="facts">
+            <li data-i18n="dbl.f1">Free to play</li>
+            <li data-i18n="dbl.f2">7 currencies</li>
+            <li data-i18n="dbl.f3">11 languages</li>
+            <li data-i18n="dbl.f4">Google Play Games leaderboards</li>
+          </ul>
+        </div>
+
+        <div class="shots" tabindex="0" aria-label="Doubloon screenshots">
+          <img src="assets/doubloon/shot-1.webp" loading="lazy" width="540" height="960" alt="Doubloon game board in the Japanese Yen stage">
+          <img src="assets/doubloon/shot-2.webp" loading="lazy" width="540" height="960" alt="Euro stage where merges chain into more merges">
+          <img src="assets/doubloon/shot-5.webp" loading="lazy" width="540" height="960" alt="US Dollar stage with the wildcard dollar tile">
+          <img src="assets/doubloon/shot-4.webp" loading="lazy" width="540" height="960" alt="Chinese Yuan stage with a red envelope tile">
+          <img src="assets/doubloon/shot-3.webp" loading="lazy" width="540" height="960" alt="Currency selection list with seven currencies">
+          <img src="assets/doubloon/shot-6.webp" loading="lazy" width="540" height="960" alt="Daily quests screen">
+          <img src="assets/doubloon/shot-7.webp" loading="lazy" width="540" height="960" alt="Doubloon main menu">
+        </div>
+
+        <div class="game-body" style="padding-top:0">
+          <h4 style="margin-top:8px" data-i18n="dbl.curTitle">Seven currencies, seven twists</h4>
+          <div class="currencies">
+            <div class="cur"><div class="coin" style="--c:#f58aa6">¥</div><div><b data-i18n="cur.jpy">Japanese Yen</b><span data-i18n="cur.jpy.d">The classic merge puzzle.</span></div></div>
+            <div class="cur"><div class="coin" style="--c:#8aa2f5">₺</div><div><b data-i18n="cur.try">Turkish Lira</b><span data-i18n="cur.try.d">Inflation: incoming coins grow as the game goes on.</span></div></div>
+            <div class="cur"><div class="coin" style="--c:#f7a35c">元</div><div><b data-i18n="cur.cny">Chinese Yuan</b><span data-i18n="cur.cny.d">Red envelopes hide bonuses, and lucky 8s score double.</span></div></div>
+            <div class="cur"><div class="coin" style="--c:#5fe08f">$</div><div><b data-i18n="cur.usd">US Dollar</b><span data-i18n="cur.usd.d">The reserve-currency $ tile merges with any coin.</span></div></div>
+            <div class="cur"><div class="coin" style="--c:#5fdde0">€</div><div><b data-i18n="cur.eur">Euro</b><span data-i18n="cur.eur.d">Merges chain into more merges for big combos.</span></div></div>
+            <div class="cur"><div class="coin" style="--c:#c08af0">£</div><div><b data-i18n="cur.gbp">British Pound</b><span data-i18n="cur.gbp.d">A royal vault stores one coin for later.</span></div></div>
+            <div class="cur"><div class="coin" style="--c:#f5c75a;font-size:.8rem">KD</div><div><b data-i18n="cur.kwd">Kuwaiti Dinar</b><span data-i18n="cur.kwd.d">Sandstorms block the board until you clear the sand.</span></div></div>
+          </div>
+
+          <h4 data-i18n="dbl.moreTitle">More ways to play</h4>
+          <ul class="features">
+            <li data-i18n="ft.1">3×3, 4×4 and 5×5 boards</li>
+            <li data-i18n="ft.2">Time Attack: two minutes on the clock</li>
+            <li data-i18n="ft.3">Daily Puzzle: the same board for everyone</li>
+            <li data-i18n="ft.4">Challenge a friend with a board code</li>
+            <li data-i18n="ft.5">Daily quests, login streaks and weekly events</li>
+            <li data-i18n="ft.6">24 achievements and detailed statistics</li>
+            <li data-i18n="ft.7">Undo, Hammer, Swap and Shuffle jokers</li>
+            <li data-i18n="ft.8">Tile skins to restyle your coins</li>
+          </ul>
+
+          <div class="game-links">
+            <!-- Oyun Play'de herkese açıldığında bu span'i şu bağlantıyla değiştir:
+                 <a class="btn primary" href="https://play.google.com/store/apps/details?id=com.dco.doubloon" data-i18n="dbl.play">Get it on Google Play</a> -->
+            <span class="btn soon" data-i18n="dbl.soon">Coming soon to Google Play</span>
+            <a class="btn ghost" href="doubloon/privacy.html" data-i18n="dbl.privacy">Privacy policy</a>
+            <a class="btn ghost" href="doubloon/terms.html" data-i18n="dbl.terms">Terms of use</a>
+          </div>
+          <p class="muted" style="font-size:.85rem;margin-top:18px" data-i18n="dbl.note">Doubloon contains ads and optional in-app purchases. In-game currencies and wealth are virtual points with no real-world value.</p>
+        </div>
+      </article>
+
+      <article class="next">
+        <div class="grid9" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div>
+          <div class="pill amber" data-i18n="next.status">In development</div>
+          <h3>Kaydırmaca</h3>
+          <p data-i18n="next.desc">A clean take on the classic sliding-tile puzzle: shuffle the board, slide the tiles back in order, and beat your own move count. Early prototype.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="about" class="about">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow" data-i18n="about.eyebrow">About</div>
+        <h2 data-i18n="about.title">A studio of one, from first sketch to store listing.</h2>
+        <p data-i18n="about.lead">I'm Deniz Can Oğuz, a developer based in Türkiye. Under the DCO Studio name I handle everything a game needs: the rules, the code, the visuals, the translations and the release.</p>
+      </div>
+      <div class="cards">
+        <div class="card"><div class="n">01</div><h3 data-i18n="about.c1t">Native, no engine</h3><p data-i18n="about.c1d">Games are written in Kotlin and drawn directly on the Android canvas, with no game engine in between.</p></div>
+        <div class="card"><div class="n">02</div><h3 data-i18n="about.c2t">Built for everyone</h3><p data-i18n="about.c2d">Doubloon ships in 11 languages, including right-to-left Arabic, so players can enjoy it in their own.</p></div>
+        <div class="card"><div class="n">03</div><h3 data-i18n="about.c3t">Respectful by default</h3><p data-i18n="about.c3d">No sign-up and no servers of my own. Your progress stays on your device, and ad consent is asked where the law requires it.</p></div>
+      </div>
+      <ul class="stack" aria-label="Tech stack">
+        <li>Kotlin</li><li>Android SDK</li><li>Canvas</li><li>Play Games Services</li><li>Play Billing</li><li>AdMob</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap">
+      <div class="contact-box">
+        <div class="eyebrow" data-i18n="contact.eyebrow">Contact</div>
+        <h2 data-i18n="contact.title">Feedback, bugs or just hello</h2>
+        <p data-i18n="contact.lead">Found a problem in a game, have an idea, or want to work together? Write to me; every message gets read.</p>
+        <div class="cta">
+          <a class="btn primary" href="mailto:dco.dev.support@gmail.com">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.200" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg>
+            dco.dev.support@gmail.com
+          </a>
+          <a class="btn ghost" href="https://github.com/denizcanoguz" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.160 19.490c.5.090.680-.220.680-.480v-1.700c-2.780.600-3.370-1.340-3.370-1.340-.450-1.160-1.110-1.470-1.110-1.470-.910-.620.070-.610.070-.610 1 .070 1.530 1.030 1.530 1.030.900 1.530 2.350 1.090 2.920.830.090-.650.350-1.090.630-1.340-2.220-.250-4.560-1.110-4.560-4.940 0-1.090.390-1.980 1.030-2.680-.100-.250-.450-1.270.100-2.650 0 0 .840-.270 2.750 1.020a9.560 9.560 0 0 1 5 0c1.910-1.290 2.750-1.020 2.750-1.020.550 1.380.200 2.400.100 2.650.640.700 1.030 1.590 1.030 2.680 0 3.840-2.340 4.690-4.570 4.930.360.310.680.920.680 1.850v2.750c0 .270.180.580.690.480A10 10 0 0 0 12 2z"/></svg>
+            GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 DCO Studio · Deniz Can Oğuz</span>
+    <span class="sp">
+      <a href="#doubloon">Doubloon</a>
+      <a href="doubloon/privacy.html" data-i18n="foot.privacy">Privacy policy</a>
+      <a href="doubloon/terms.html" data-i18n="dbl.terms">Terms of use</a>
+      <a href="legal.html" data-i18n="foot.legal">Legal &amp; cookies</a>
+      <a href="mailto:dco.dev.support@gmail.com" data-i18n="foot.support">Support</a>
+    </span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var tr = {
+    "_title": "DCO Studio – Kendine has kuralları olan mobil bulmaca oyunları",
+    "nav.games": "Oyunlar", "nav.about": "Hakkında", "nav.contact": "İletişim",
+    "hero.eyebrow": "Bağımsız mobil oyun stüdyosu",
+    "hero.title": "Cebine sığan, <em>kendine has kuralları olan</em> bulmaca oyunları.",
+    "hero.lead": "DCO Studio, Deniz Can Oğuz'un tek kişilik stüdyosu. Android için mobil oyunlar tasarlıyor, geliştiriyor ve yayınlıyorum: öğrenmesi kolay, ama içinde daha önce görmediğin bir iki kural olan oyunlar.",
+    "hero.cta1": "Doubloon'la tanış", "hero.cta2": "İletişime geç",
+    "games.eyebrow": "Oyunlar",
+    "games.title": "Biri yola çıktı, sıradaki tezgâhta.",
+    "dbl.status": "Kapalı testte · Android",
+    "dbl.sub": "Para Birleştirme",
+    "dbl.desc": "Kaydır, birleştir, paralarını katla. Doubloon, birleştirdiğin her paranın servetini büyüttüğü rahatlatıcı bir sayı birleştirme bulmacası. Japon Yeni ile başla, servetini büyüt ve altı para biriminin daha kilidini aç. Her birinin kendine özgü renkleri, müziği ve oyunu değiştiren bir kuralı var.",
+    "dbl.f1": "Ücretsiz oynanır", "dbl.f2": "7 para birimi", "dbl.f3": "11 dil", "dbl.f4": "Google Play Games sıralamaları",
+    "dbl.curTitle": "Yedi para birimi, yedi farklı kural",
+    "cur.jpy": "Japon Yeni", "cur.jpy.d": "Klasik birleştirme bulmacası.",
+    "cur.try": "Türk Lirası", "cur.try.d": "Enflasyon: oyun ilerledikçe gelen paralar büyür.",
+    "cur.cny": "Çin Yuanı", "cur.cny.d": "Kırmızı zarflardan ödül çıkar, şanslı 8'ler iki kat puan getirir.",
+    "cur.usd": "ABD Doları", "cur.usd.d": "Rezerv para: $ taşı her parayla birleşir.",
+    "cur.eur": "Euro", "cur.eur.d": "Birleşmeler zincirleme devam eder, büyük kombolar gelir.",
+    "cur.gbp": "İngiliz Sterlini", "cur.gbp.d": "Kraliyet kasası bir parayı sonrası için saklar.",
+    "cur.kwd": "Kuveyt Dinarı", "cur.kwd.d": "Çöl fırtınası tahtaya kum bırakır; temizleyene kadar yolu kapatır.",
+    "dbl.moreTitle": "Farklı oyun modları",
+    "ft.1": "3×3, 4×4 ve 5×5 tahtalar",
+    "ft.2": "Zamana karşı: iki dakikan var",
+    "ft.3": "Günün bulmacası: herkes için aynı tahta",
+    "ft.4": "Tahta koduyla arkadaşına meydan oku",
+    "ft.5": "Günlük görevler, giriş serileri ve haftalık etkinlikler",
+    "ft.6": "24 başarım ve ayrıntılı istatistikler",
+    "ft.7": "Geri al, Çekiç, Takas ve Karıştır jokerleri",
+    "ft.8": "Paraların görünümünü değiştiren taş görünümleri",
+    "dbl.soon": "Yakında Google Play'de",
+    "dbl.play": "Google Play'den indir",
+    "dbl.privacy": "Gizlilik politikası",
+    "dbl.note": "Doubloon reklam ve isteğe bağlı uygulama içi satın alımlar içerir. Oyundaki para birimleri ve servet, gerçek parasal değeri olmayan sanal puanlardır.",
+    "next.status": "Geliştiriliyor",
+    "next.desc": "Klasik kaydırmalı taş bulmacasının sade bir yorumu: tahtayı karıştır, taşları sırasına diz, kendi hamle rekorunu kır. Erken prototip aşamasında.",
+    "about.eyebrow": "Hakkında",
+    "about.title": "İlk eskizden mağaza sayfasına, tek kişilik bir stüdyo.",
+    "about.lead": "Ben Deniz Can Oğuz, Türkiye'de yaşayan bir geliştiriciyim. DCO Studio adı altında bir oyunun ihtiyaç duyduğu her şeyle ben ilgileniyorum: kurallar, kod, görseller, çeviriler ve yayın.",
+    "about.c1t": "Yerel kod, motor yok",
+    "about.c1d": "Oyunlar Kotlin ile yazılıyor ve arada bir oyun motoru olmadan doğrudan Android tuvaline çiziliyor.",
+    "about.c2t": "Herkes için",
+    "about.c2d": "Doubloon, sağdan sola yazılan Arapça dahil 11 dilde yayınlanıyor; herkes kendi dilinde oynayabilsin diye.",
+    "about.c3t": "Oyuncuya saygılı",
+    "about.c3d": "Üyelik yok, bana ait bir sunucu yok. İlerlemen cihazında kalır; reklam izni de yasanın gerektirdiği yerlerde sorulur.",
+    "contact.eyebrow": "İletişim",
+    "contact.title": "Geri bildirim, hata ya da sadece selam",
+    "contact.lead": "Bir oyunda sorun mu buldun, bir fikrin mi var, yoksa birlikte çalışmak mı istiyorsun? Bana yaz; her mesajı okuyorum.",
+    "foot.privacy": "Gizlilik politikası", "foot.support": "Destek",
+    "dbl.terms": "Kullanım koşulları", "foot.legal": "Yasal bilgiler ve çerezler"
+  };
+  var nodes = document.querySelectorAll("[data-i18n]");
+  var en = { "_title": document.title };
+  nodes.forEach(function (n) { en[n.dataset.i18n] = n.innerHTML; });
+
+  function apply(lang) {
+    var dict = lang === "tr" ? tr : en;
+    nodes.forEach(function (n) { var v = dict[n.dataset.i18n]; if (v != null) n.innerHTML = v; });
+    document.title = dict._title;
+    document.documentElement.lang = lang;
+    document.querySelectorAll(".lang button").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.dataset.lang === lang));
+    });
+  }
+  var saved = null;
+  try { saved = localStorage.getItem("lang"); } catch (e) {}
+  var lang = saved || ((navigator.language || "en").toLowerCase().indexOf("tr") === 0 ? "tr" : "en");
+  if (lang !== "en") apply(lang);
+  document.querySelectorAll(".lang button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      apply(b.dataset.lang);
+      try { localStorage.setItem("lang", b.dataset.lang); } catch (e) {}
+    });
+  });
+})();
+</script>
+</body>
+</html>
